@@ -1,0 +1,14 @@
+NTP: 
+	1. Strata numbered 0(lower strata) to 16(higher strata). Lower strata are closer to reference time source
+	2. Poll between 8 seconds and 36hrs depending. Goal to maximize accuracy while minimizing network load.
+	3. Protocol uses 4 timestamps:
+		A. T1 = client send request timestamp
+		B. T2 = server recv request timestamp
+		C. T3 = server send response timestamp
+		D. T4 = client recv response timestamp
+	4. These timestampts are used to calc the clock offset and roundtrip delay
+	5. These are calc as follows:
+		A. offset = [( T2 - T1 ) + ( T3 - T4 )] / 2
+		B. delay = ( T4 - T1 ) - ( T3 - T2 )
+	6. Can use "Clock Filter Algorithm" to select the most accurate samples for offset and delay
+	7. Can use "Clock Discipline Algorithm" to adjust the system clock time and frequency
