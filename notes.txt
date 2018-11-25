@@ -12,3 +12,7 @@ NTP:
 		B. delay = ( T4 - T1 ) - ( T3 - T2 )
 	6. Can use "Clock Filter Algorithm" to select the most accurate samples for offset and delay
 	7. Can use "Clock Discipline Algorithm" to adjust the system clock time and frequency
+	8. "The goal of the NTP algorithms is to minimize
+	   both the time difference and frequency difference between UTC and the
+	   system clock.  When these differences have been reduced below nominal
+	   tolerances, the system clock is said to be synchronized to UTC."
