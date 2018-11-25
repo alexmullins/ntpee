@@ -1,4 +1,4 @@
-NTP: 
+NTP (client/server mode) - https://tools.ietf.org/html/rfc5905: 
 	1. Strata numbered 0(lower strata) to 16(higher strata). Lower strata are closer to reference time source
 	2. Poll between 8 seconds and 36hrs depending. Goal to maximize accuracy while minimizing network load.
 	3. Protocol uses 4 timestamps:
@@ -16,3 +16,38 @@ NTP:
 	   both the time difference and frequency difference between UTC and the
 	   system clock.  When these differences have been reduced below nominal
 	   tolerances, the system clock is said to be synchronized to UTC."
+	9. Client keeps state variables org, rec, xmt
+	10. "Before the xmt and org state variables are updated, two sanity checks
+   are performed in order to protect against duplicate, bogus, or
+   replayed packets.  In the exchange above, a packet is duplicate or
+   replay if the transmit timestamp t3 in the packet matches the org
+   state variable T3.  A packet is bogus if the origin timestamp t1 in
+   the packet does not match the xmt state variable T1.  In either of
+   these cases, the state variables are updated, then the packet is
+   discarded.  To protect against replay of the last transmitted packet,
+   the xmt state variable is set to zero immediately after a successful
+   bogus check."
+   11. A really nice explanation of NTP:
+			"""
+			First of all, NTP timestamps are stored as seconds since January 1, 1900. 32 bits for the number of seconds, and 32 bits for the fractions of a second.
+
+			The synchronization is tricky. The client stores the timestamp (say A) (all these values are in seconds) when it sends the request. The server sends a reply consisting of the "true" time when it received the packet (call that X) and the "true" time it will transmit the packet (Y). The client will receive that packet and log the time when it received it (B).
+
+			NTP assumes that the time spent on the network is the same for sending and receiving. Over enough intervals over sane networks, it should average out to be so. We know that the total transit time from sending the request to receiving the response was B-A seconds. We want to remove the time that the server spent processing the request (Y-X), leaving only the network traversal time, so that's B-A-(Y-X). Since we're assuming the network traversal time is symmetric, the amount of time it took the response to get from the server to the client is [B-A-(Y-X)]/2. So we know that the server sent its response at time Y, and it took us [B-A-(Y-X)]/2 seconds for that response to get to us.
+
+			So the true time when we received the response is Y+[B-A-(Y-X)]/2 seconds. And that's how NTP works.
+
+			Example (in whole seconds to make the math easy):
+
+			Client sends request at "wrong" time 100. A=100.
+			Server receives request at "true" time 150. X=150.
+			The server is slow, so it doesn't send out the response until "true" time 160. Y=160.
+			The client receives the request at "wrong" time 120. B=120.
+			Client determines the time spend on the network is B-A-(Y-X)=120-100-(160-150)=10 seconds
+			Client assumes the amount of time it took for the response to get from the server to the client is 10/2=5 seconds.
+			Client adds that time to the "true" time when the server sent the response to estimate that it received the response at "true" time 165 seconds.
+			Client now knows that it needs to add 45 seconds to its clock.
+			In a proper implementation, the client runs as a daemon, all the time. Over a long period of time with many samples, NTP can actually determine if the computer's clock is slow or fast, and automatically adjust it accordingly, allowing it to keep reasonably good time even if it is later disconnected from the network. Together with averaging the responses from the server, and application of more complicated thinking, you can get incredibly accurate times.
+
+			There's more, of course, to a proper implementation than that, but that's the gist of it.
+			"""
