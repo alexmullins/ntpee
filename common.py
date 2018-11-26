@@ -2,8 +2,7 @@
 import pathlib
 import enum
 import abc
-import lzma
-from os.path import join
+import struct
 
 DEBUG = True
 
@@ -20,12 +19,6 @@ class ConnectionClosedException(Exception):
 class UnknownMsgTypeException(Exception):
     def __init__(self, code):
         self.code = code
-
-
-class MsgType(enum.IntEnum):
-    # Normal command message types
-    pass
-    # Error message type
 
 
 class Message(metaclass=abc.ABCMeta):
@@ -60,7 +53,65 @@ class Message(metaclass=abc.ABCMeta):
         """
 
 
+class MsgType(enum.IntEnum):
+    ClientRequest = 1
+    ServerResponse = 2
+
+
+class ClientRequest(Message):
+    """
+    ClientRequest is sent between a NTP client and server
+    recording t1. Server will send a ServerResponse containing
+    t2 and t3. All timestamps are 64 bit unix timestamps (doubles)
+    """
+
+    def __init__(self, t1=None):
+        self.t1 = t1
+
+    def id(self):
+        return MsgType.ClientRequest
+
+    def encode(self):
+        frame = bytearray()
+        frame.extend(struct.pack(">d", self.t1))
+        return frame
+
+    def decode(self, data):
+        self.t1 = struct.unpack(">d",  data)[0]
+
+
+class ServerResponse(Message):
+    """
+    ServerResponse is sent between from a NTP server
+    to client recording t1, t2, t3 in resonse to ClientRequest
+    """
+
+    def __init__(self, t1=None, t2=None, t3=None):
+        self.t1 = t1
+        self.t2 = t2
+        self.t3 = t3
+
+    def id(self):
+        return MsgType.ServerResponse
+
+    def encode(self):
+        frame = bytearray()
+        frame.extend(struct.pack(">d", self.t1))
+        frame.extend(struct.pack(">d", self.t2))
+        frame.extend(struct.pack(">d", self.t3))
+
+        return frame
+
+    def decode(self, data):
+        self.t1 = struct.unpack(">d",  data[0:8])[0]
+        self.t2 = struct.unpack(">d",  data[8:16])[0]
+        self.t3 = struct.unpack(">d",  data[16:24])[0]
+
+
+# dictionary mapping MsgType -> Message sublcasses
 messages = dict()
+messages[MsgType.ClientRequest] = ClientRequest
+messages[MsgType.ServerResponse] = ServerResponse
 
 
 def recvmsg(socket):
