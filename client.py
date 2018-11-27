@@ -44,7 +44,7 @@ def calc_offset(t1, t2, t3, t4):
 
 
 def calc_delay(t1, t2, t3, t4):
-    return (t4 - t1) - (t3 - t2)
+    return ((t4 - t1) - (t3 - t2)) / 2
 
 
 def calc_newtime(t1, t2, t3, t4):
