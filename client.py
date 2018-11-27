@@ -5,6 +5,12 @@ from datetime import datetime
 import sys
 import time
 
+# poll times in seconds
+MIN_POLL = 4.0
+MAX_POLL = 30.0
+
+STEP_THRESHOLD = 128  # milliseconds
+
 
 class NTPeeClient():
     def __init__(self, dest_ip, dest_port):
@@ -33,11 +39,24 @@ class NTPeeClient():
         return sr
 
 
+def calc_offset(t1, t2, t3, t4):
+    return ((t2 - t1) + (t3 - t4)) / 2
+
+
+def calc_delay(t1, t2, t3, t4):
+    return (t4 - t1) - (t3 - t2)
+
+
+def calc_newtime(t1, t2, t3, t4):
+    return t3 + abs(calc_delay(t1, t2, t3, t4) / 2)
+
+
 def main():
     # open a client
     # poll every 30 seconds
     # get new time to sync to
     # apply either instant time jump or gradual time slewing
+    polltime = MIN_POLL
     hostip = socket.gethostbyname(sys.argv[1])
     hostport = (hostip, 9999)
     print("Connecting to {}".format(hostport))
@@ -53,9 +72,16 @@ def main():
         sr.decode(data)
         if sr.t1 == t1:
             print("T1 matches")
-        print("T3: {}".format(sr.t3))
-        print("T4: {}".format(t4))
-        time.sleep(5.0)
+        t2 = sr.t2
+        t3 = sr.t3
+        print("T3: {}".format(datetime.fromtimestamp(t3)))
+        print("T4: {}".format(datetime.fromtimestamp(t4)))
+        print("Offset: {:.2f}ms".format(calc_offset(t1, t2, t3, t4)*1000))
+        print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
+        print("New time: {}".format(
+            datetime.fromtimestamp(calc_newtime(t1, t2, t3, t4))))
+
+        time.sleep(polltime)
 
 
 if __name__ == "__main__":

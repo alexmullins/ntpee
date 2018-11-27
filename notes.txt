@@ -35,7 +35,7 @@ NTP (client/server mode) - https://tools.ietf.org/html/rfc5905:
 
 			NTP assumes that the time spent on the network is the same for sending and receiving. Over enough intervals over sane networks, it should average out to be so. We know that the total transit time from sending the request to receiving the response was B-A seconds. We want to remove the time that the server spent processing the request (Y-X), leaving only the network traversal time, so that's B-A-(Y-X). Since we're assuming the network traversal time is symmetric, the amount of time it took the response to get from the server to the client is [B-A-(Y-X)]/2. So we know that the server sent its response at time Y, and it took us [B-A-(Y-X)]/2 seconds for that response to get to us.
 
-			So the true time when we received the response is Y+[B-A-(Y-X)]/2 seconds. And that's how NTP works.
+			So the true time when we received the response is t3+[t4-t1-(t3-t2)]/2 seconds. And that's how NTP works.
 
 			Example (in whole seconds to make the math easy):
 
@@ -51,3 +51,4 @@ NTP (client/server mode) - https://tools.ietf.org/html/rfc5905:
 
 			There's more, of course, to a proper implementation than that, but that's the gist of it.
 			"""
+	12. need to setup `timedatectl set-ntp false`
