@@ -41,8 +41,8 @@ class NTPeeServerHandler(socketserver.BaseRequestHandler):
 
 
 def main():
-    #hostport = ('0.0.0.0', 9999)
-    hostport = ('localhost', 9999)
+    hostport = ('0.0.0.0', 9999)
+    #hostport = ('localhost', 9999)
 
     with NTPeeServer(hostport, NTPeeServerHandler) as server:
         print("Server listening on {}".format(hostport))
