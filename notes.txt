@@ -51,4 +51,5 @@ NTP (client/server mode) - https://tools.ietf.org/html/rfc5905:
 
 			There's more, of course, to a proper implementation than that, but that's the gist of it.
 			"""
-	12. need to setup `timedatectl set-ntp false`
+	12. need to setup `timedatectl set-ntp false
+	13. time stepping with `date --set="DATE"`
