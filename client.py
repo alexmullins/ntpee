@@ -4,10 +4,10 @@ from common import *
 from datetime import datetime
 import sys
 import time
+import os
 
 # poll times in seconds
 MIN_POLL = 4.0
-MAX_POLL = 30.0
 
 STEP_THRESHOLD = 128  # milliseconds
 
@@ -48,7 +48,8 @@ def calc_delay(t1, t2, t3, t4):
 
 
 def calc_newtime(t1, t2, t3, t4):
-    return t3 + abs(calc_delay(t1, t2, t3, t4) / 2)
+    offset = calc_offset(t1, t2, t3, t4)
+    return datetime.now().timestamp() + offset
 
 
 def main():
@@ -78,9 +79,9 @@ def main():
         print("T4: {}".format(datetime.fromtimestamp(t4)))
         print("Offset: {:.2f}ms".format(calc_offset(t1, t2, t3, t4)*1000))
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
-        print("New time: {}".format(
-            datetime.fromtimestamp(calc_newtime(t1, t2, t3, t4))))
-
+        new_time = datetime.fromtimestamp(calc_newtime(t1, t2, t3, t4))
+        print("New time: {}".format(new_time))
+        os.system('date --set="{}"'.format(new_time))
         time.sleep(polltime)
 
 
