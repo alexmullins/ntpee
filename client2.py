@@ -65,6 +65,8 @@ def main():
     hostport = (hostip, 9999)
     print("Connecting to {}".format(hostport))
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    offset = 0
+    offset2 = 0
     while True:
         t1 = datetime.now().timestamp()
         cr = ClientRequest(t1)
@@ -85,7 +87,9 @@ def main():
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
         tick_factor = choose_factor(offset*1000)  # turn to ms
         print("Tick factor: {}".format(tick_factor))
+        print("Offset delta: {}".format(offset-offset2))
         os.system('adjtimex --tick {}'.format(tick_factor))
+        offset2 = offset
         time.sleep(MIN_POLL)
         # DayOfWeek Year-Month-Day HH:MM:SEC.MS TIMEZONE
 
