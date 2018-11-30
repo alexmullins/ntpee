@@ -85,6 +85,7 @@ def main():
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
         tick_factor = choose_factor(offset*1000)  # turn to ms
         print("Tick factor: {}".format(tick_factor))
+        time.sleep(MIN_POLL)
         # DayOfWeek Year-Month-Day HH:MM:SEC.MS TIMEZONE
 
 
