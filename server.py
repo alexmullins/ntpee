@@ -37,6 +37,8 @@ class NTPeeServerHandler(socketserver.BaseRequestHandler):
         print("[+]Sent: {} was sent {}".format(
             self.client_address[0], packet.hex()))
         print("T3: {}".format(sr.t3))
+        new_time = datetime.fromtimestamp(t3)
+        print(new_time.strftime("%a %b %d %H:%M:%S.%f {} %Y").format("UTC"))
         return
 
 

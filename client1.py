@@ -81,7 +81,8 @@ def main():
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
         new_time = datetime.fromtimestamp(calc_newtime(t1, t2, t3, t4))
         print("New time: {}".format(new_time))
-        os.system('date --set="{}"'.format(new_time))
+        #os.system('date --set="{}"'.format(new_time))
+        print(new_time.strftime("%a %b %d %H:%M:%S.%f {} %Y").format("UTC"))
         time.sleep(polltime)
 
 
