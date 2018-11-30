@@ -91,15 +91,15 @@ def main():
 
 def choose_factor(offset):
     if offset == 0:
-        return 0
+        return 10000
     if offset > 1000:
-        return 9000
-    elif offset > 0:
-        return 9990
-    elif offset > -1000:
-        return 10010
-    else:
         return 11000
+    elif offset > 0:
+        return 10010
+    elif offset > -1000:
+        return 9995
+    else:
+        return 9000
 
 
 if __name__ == "__main__":
