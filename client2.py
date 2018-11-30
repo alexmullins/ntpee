@@ -87,7 +87,7 @@ def main():
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
         tick_factor = choose_factor(offset*1000)  # turn to ms
         print("Tick factor: {}".format(tick_factor))
-        print("Offset lowering?: {}".format(offset < offset2))
+        print("Offset lowering?: {}".format(abs(offset) < abs(offset2)))
         os.system('adjtimex --tick {}'.format(tick_factor))
         offset2 = offset
         time.sleep(MIN_POLL)
