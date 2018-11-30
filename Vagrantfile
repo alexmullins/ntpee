@@ -11,6 +11,7 @@ Vagrant.configure("2") do |config|
     config.vm.provider "virtualbox" do |v|
         v.linked_clone = true
     end
+    config.vbguest.auto_update = false
     $num_boxes = 3
     # loop $num_boxes times
     (1..$num_boxes).each do |i|
