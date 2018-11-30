@@ -78,16 +78,27 @@ def main():
             print("T1 matches")
         t2 = sr.t2
         t3 = sr.t3
+        offset = calc_offset(t1, t2, t3, t4)
         print("T3: {}".format(datetime.fromtimestamp(t3)))
         print("T4: {}".format(datetime.fromtimestamp(t4)))
-        print("Offset: {:.2f}ms".format(calc_offset(t1, t2, t3, t4)*1000))
+        print("Offset: {:.2f}ms".format(offset*1000))
         print("Delay: {:.2f}ms".format(calc_delay(t1, t2, t3, t4)*1000))
-        new_time = datetime.fromtimestamp(calc_newtime(t1, t2, t3, t4))
-        new_time.strftime("%a %b %d %H:%M:%S.%f {} %Y").format("UTC")
-        print("New time: {}".format(new_time))
-        print('date --set="{}"'.format(new_time))
-        time.sleep(polltime)
+        tick_factor = choose_factor(offset*1000)  # turn to ms
+        print("Tick factor: {}".format(tick_factor))
         # DayOfWeek Year-Month-Day HH:MM:SEC.MS TIMEZONE
+
+
+def choose_factor(offset):
+    if offset == 0:
+        return 0
+    if offset > 1000:
+        return 9000
+    elif offset > 0:
+        return 9990
+    elif offset > -1000:
+        return 10010
+    else:
+        return 11000
 
 
 if __name__ == "__main__":
